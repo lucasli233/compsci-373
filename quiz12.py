@@ -112,6 +112,44 @@ def computeConnectedComponentLabeling(pixel_array, image_width, image_height):
 
     return ccimg, ccsizes
 
+def computeBox(ccimg, ccsizes, image_width, image_height):
+    largestComponent = createInitializedGreyscalePixelArray(image_width, image_height)
+    largestComponent_size = 0
+    largestComponent_lable = 0
+    for lable in ccsizes.keys():
+        if ccsizes[lable] > largestComponent_size:
+            largestComponent_size = ccsizes[lable]
+            largestComponent_lable = lable
+
+    print(largestComponent_lable, largestComponent_size)
+
+    box_minh = image_width
+    box_maxh = 0
+    box_minw = image_height
+    box_maxw = 0
+    
+    for i in range(0, image_height):
+        for j in range(0, image_width):
+            if pixel_array[i][j] == largestComponent_lable:
+                largestComponent[i][j] = 255
+                if i < box_minh:
+                    box_minh = i
+                if i > box_maxh:
+                    box_maxh = i
+                if j < box_minw:
+                    j = box_minw
+                if j > box_maxw:
+                    j = box_maxw
+
+            else:
+                largestComponent[i][j] = 0
+    
+    box_location = (box_minw, box_minh)
+    box_width = box_maxw - box_minw
+    box_height = box_maxh - box_minh
+
+    return(box_location, box_width, box_height)
+
 
 if __name__ == '__main__':
     image_width = 16
@@ -138,3 +176,5 @@ if __name__ == '__main__':
     for i in range(len(ccimg)):
         print(ccimg[i])
     print(ccsizes)
+
+    computeBox(ccimg, ccsizes, image_width, image_height)
